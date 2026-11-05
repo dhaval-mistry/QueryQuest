@@ -1,0 +1,29 @@
+
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Debug whichever Python file is currently open.
+      "name": "Python: Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "justMyCode": true
+    },
+    {
+      // Debug our Planner using the same module
+      // command as: uv run python -m tests.test_planner
+      "name": "QueryQuest: Planner Agent",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "tests.check_model_access",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "envFile": "${workspaceFolder}/.env",
+      "justMyCode": true
+    }
+  ]
+}
