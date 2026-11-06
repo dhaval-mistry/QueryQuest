@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#101318" />
+  <meta name="description" content="Explore the QueryQuest architecture: OpenAI Agents SDK, Pydantic structured outputs, Gradio, live web search, and HTML report delivery." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="QueryQuest | Research Agent Architecture" />
+  <meta property="og:description" content="A simple three-agent workflow that turns a question into a cited research article, powered by the OpenAI Agents SDK and Pydantic." />
+  <!-- If your GitHub repository is NOT named QueryQuest, change this URL to your actual Pages URL. -->
+  <meta property="og:image" content="https://dhaval-mistry.github.io/QueryQuest/assets/queryquest-social.png" />
+  <meta property="og:image:width" content="1672" />
+  <meta property="og:image:height" content="941" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <title>QueryQuest | Architecture</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #101318;
+      --panel: #1a2027;
+      --panel-soft: #202730;
+      --panel-strong: #282f38;
+      --edge: rgba(210, 224, 238, .13);
+      --edge-strong: rgba(242, 250, 255, .22);
+      --text: #f3f6f9;
+      --muted: #aebbc7;
+      --coral: #ff806e;
+      --coral-strong: #ff977b;
+      --coral-soft: rgba(255,128,110,.11);
+      --mint: #8de3c7;
+      --radius: 22px;
+      --shadow: 0 18px 48px rgba(0,0,0,.2);
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+    body::before { content: ""; pointer-events: none; position: fixed; inset: 0; opacity: .4; background: radial-gradient(ellipse 700px 340px at 12% 0, rgba(255,128,110,.1), transparent 70%),radial-gradient(ellipse 760px 480px at 95% 50%, rgba(116,172,210,.05), transparent 70%); }
+    .wrap { width: min(1510px, calc(100% - 72px)); margin: 0 auto; position: relative; }
+    .icon { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+    .icon.sm { width: 18px; height: 18px; }
+    .site-header { display: flex; align-items: center; justify-content: space-between; padding: 28px 0; gap: 18px; border-bottom: 1px solid var(--edge); }
+    .brand { display: flex; align-items: center; gap: 13px; text-decoration: none; color: inherit; }
+    .brand-mark { display: grid; place-items: center; width: 45px; height: 45px; background: var(--coral-soft); border: 1px solid rgba(255,128,110,.28); border-radius: 14px; color: var(--coral); }
+    .brand-mark .icon { width: 26px; height: 26px; }
+    .brand-name { font-weight: 790; font-size: 19px; letter-spacing: -.045em; }
+    .header-right { display: flex; align-items: center; gap: 16px; }
+    .meta { font-size: 11px; text-transform: uppercase; color: #d4dbe1; letter-spacing: .135em; font-weight: 700; }
+    .header-chip { display: inline-flex; align-items: center; gap: 7px; color: var(--mint); font-size: 11px; font-weight: 700; letter-spacing: .05em; background: rgba(141,227,199,.08); border: 1px solid rgba(141,227,199,.24); border-radius: 999px; padding: 7px 11px; }
+    .live-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 3px rgba(141,227,199,.08); }
+    .hero { padding: 64px 0 39px; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: end; gap: 34px; }
+    .eyebrow { display: flex; align-items: center; gap: 10px; color: var(--coral-strong); text-transform: uppercase; font-size: 11px; font-weight: 800; letter-spacing: .19em; margin-bottom: 16px; }
+    .eyebrow::before { content: ""; width: 22px; height: 2px; background: currentColor; }
+    h1 { margin: 0; font-size: clamp(38px,4.2vw,70px); line-height: 1.08; font-weight: 810; letter-spacing: -.065em; }
+    h1 span { color: var(--coral); }
+    .hero p { font-size: clamp(15px,1.25vw,19px); color: var(--muted); max-width: 750px; margin: 19px 0 0; line-height: 1.65; }
+    .author { text-align: right; padding-bottom: 8px; white-space: nowrap; }
+    .author small { font-size: 11px; letter-spacing: .13em; text-transform: uppercase; color: var(--muted); display: block; }
+    .author strong { font-size: 14px; color: #f2f3f7; font-weight: 650; }
+    .author strong span { color: var(--coral); }
+    .stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; padding: 8px 0 42px; }
+    .stat { padding: 17px 19px; background: rgba(255,255,255,.026); border: 1px solid var(--edge); border-radius: 15px; display: flex; align-items: center; gap: 12px; }
+    .stat .icon { color: var(--coral); width: 20px; height: 20px; }
+    .stat b { display: block; line-height: 1.2; color: #f5f7fa; font-size: 16px; }
+    .stat small { display: block; color: var(--muted); font-size: 11px; margin-top: 3px; letter-spacing: .02em; }
+    .architecture { border: 1px solid var(--edge); background: linear-gradient(165deg,rgba(29,35,43,.95),rgba(19,24,30,.97)); border-radius: 28px; padding: 29px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
+    .architecture::before { content: ""; position: absolute; width: 430px; height: 430px; background: radial-gradient(circle, rgba(255,128,110,.075), transparent 65%); right:-120px; top:-220px; pointer-events: none; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 23px; }
+    .section-head h2 { font-size: 17px; font-weight: 750; margin: 0; letter-spacing: -.025em; }
+    .section-kicker { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .12em; font-weight: 650; }
+    .orchestrator { display: flex; align-items: center; justify-content: center; gap: 13px; border: 1px dashed rgba(255,128,110,.36); background: var(--coral-soft); padding: 12px 15px; width: fit-content; max-width: 100%; margin: 0 auto 31px; border-radius: 12px; color: #f6cfcb; }
+    .orchestrator .icon { color: var(--coral); }
+    .orchestrator b { font-size: 12px; }
+    .orchestrator code { color: #f7b7ac; font-size: 12px; }
+    .orchestrator small { color: #c3a29f; font-size: 11px; }
+    .flow { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 26px; counter-reset: flow; }
+    .stage { position: relative; display: flex; flex-direction: column; min-width: 0; min-height: 335px; padding: 21px 18px 20px; border-radius: 19px; background: linear-gradient(172deg,#292f38 0,#20262f 100%); border: 1px solid rgba(226,237,247,.14); box-shadow: 0 9px 18px rgba(0,0,0,.12); }
+    .stage:not(:last-child)::after { content: "➜"; position: absolute; top: 49%; right: -24px; transform: translateY(-50%); color: var(--coral); font-size: 25px; font-weight: 400; z-index: 2; line-height: 1; }
+    .stage-num { font-size: 11px; color: var(--coral-strong); font-weight: 780; letter-spacing: .13em; }
+    .stage-icon { margin: 17px 0 16px; height: 53px; width: 53px; border-radius: 15px; display: grid; place-items: center; background: rgba(255,128,110,.09); border: 1px solid rgba(255,128,110,.25); color: var(--coral); }
+    .stage-icon .icon { width: 29px; height: 29px; }
+    .stage h3 { font-size: clamp(16px,1.3vw,21px); font-weight: 740; line-height: 1.3; letter-spacing: -.035em; margin: 0 0 9px; }
+    .stage p { margin: 0 0 16px; font-size: 12px; line-height: 1.55; color: #c0cbd5; }
+    .stage-bottom { margin-top: auto; padding-top: 14px; border-top: 1px solid var(--edge); }
+    .stage-label { color: #e5c3bf; font-size: 10px; letter-spacing: .08em; font-weight: 780; text-transform: uppercase; }
+    .stage-details { font-size: 12px; color: #f1f3f5; font-weight: 650; line-height: 1.45; margin-top: 5px; overflow-wrap: anywhere; }
+    .stage-details code { font-size: 11px; color: #d4dee7; }
+    .stage-search { border-color: rgba(255,128,110,.6); background: linear-gradient(165deg, #343039, #24272f); box-shadow: 0 0 0 1px rgba(255,128,110,.12),0 12px 28px rgba(0,0,0,.17); }
+    .tool-call { border: 1px solid rgba(255,128,110,.3); background: rgba(255,128,110,.085); border-radius: 10px; padding: 9px 10px; margin: 6px 0 14px; display: flex; gap: 9px; align-items: center; }
+    .tool-call .icon { color: var(--coral); width: 18px; height: 18px; }
+    .tool-call strong { font-size: 11px; color: #ffd8cf; line-height: 1.3; }
+    .tool-call small { display: block; color: #cfb4ae; font-size: 10px; }
+    .process { display: flex; justify-content: center; align-items: center; gap: 9px; margin-top: 22px; font-size: 11px; color: #9eafbb; text-align: center; }
+    .process::before, .process::after { content: ""; width: 50px; height: 1px; background: var(--edge-strong); }
+    .output-head { display: flex; align-items: center; gap: 12px; padding: 34px 0 18px; }
+    .output-head .line { flex: 1; height: 1px; background: var(--edge); }
+    .output-head strong { font-size: 11px; color: #d6e0e7; letter-spacing: .13em; text-transform: uppercase; }
+    .outputs { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 18px; }
+    .output-card { display: flex; align-items: center; gap: 17px; padding: 20px; border: 1px solid var(--edge); border-radius: 15px; background: rgba(255,255,255,.028); }
+    .output-ico { color: var(--mint); display: grid; place-items: center; width: 50px; height: 50px; border-radius: 12px; background: rgba(141,227,199,.08); border: 1px solid rgba(141,227,199,.16); flex: none; }
+    .output-ico.email { color: var(--coral); background: var(--coral-soft); border-color: rgba(255,128,110,.23); }
+    .output-ico .icon { width: 26px; height: 26px; }
+    .output-card h3 { font-size: 15px; margin: 0; line-height: 1.35; }
+    .output-card p { color: var(--muted); font-size: 12px; line-height: 1.5; margin: 4px 0 0; }
+    .lower { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; padding: 24px 0 45px; }
+    .panel { background: rgba(255,255,255,.024); border: 1px solid var(--edge); border-radius: 18px; padding: 22px 24px; }
+    .panel h2 { margin: 0 0 17px; font-size: 15px; font-weight: 720; letter-spacing: -.02em; display:flex; align-items:center; gap:9px; }
+    .panel h2 .icon { width: 19px; height: 19px; color: var(--coral); }
+    .stack { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 11px; }
+    .stack-item { min-width: 0; border: 1px solid var(--edge); border-radius: 11px; padding: 12px; background: rgba(255,255,255,.022); }
+    .stack-item strong { display: block; font-size: 12px; font-weight: 720; line-height: 1.35; }
+    .stack-item small { display: block; margin-top: 5px; color: var(--muted); font-size: 11px; line-height: 1.45; }
+    .principles { margin: 0; padding: 0; list-style: none; display: grid; gap: 11px; }
+    .principles li { display: flex; align-items: start; gap: 9px; font-size: 12px; color: #d7e0e8; }
+    .principles .icon { color: var(--mint); width: 16px; height: 16px; margin-top: 2px; }
+    footer { border-top: 1px solid var(--edge); display: flex; align-items: center; justify-content: space-between; padding: 25px 0 32px; gap: 18px; color: var(--muted); font-size: 12px; }
+    footer strong { color: var(--coral); font-weight: 700; }
+    footer .foot-link { color: #dce6ed; text-decoration: none; border-bottom: 1px solid rgba(220,230,237,.33); }
+    footer .foot-link:hover { color: var(--coral); border-bottom-color: var(--coral); }
+    @media(max-width: 1160px) {
+      .wrap { width: min(960px,calc(100% - 48px)); }
+      .flow { grid-template-columns: 1fr; gap: 26px; }
+      .stage { min-height: auto; padding: 19px 22px; display: grid; grid-template-columns: 70px minmax(0,1fr); grid-template-rows: auto auto 1fr; gap: 0 10px; }
+      .stage-num { grid-column:2; grid-row: 1; }
+      .stage-icon { grid-column:1; grid-row: 1/4; margin: 4px 0; }
+      .stage h3 { grid-column:2; grid-row: 2; margin-top: 4px; }
+      .stage p { grid-column:2; grid-row:3; margin-bottom: 10px; }
+      .stage-bottom { grid-column: 1/-1; padding-top: 11px; margin-top: 5px; }
+      .stage-search .tool-call { grid-column:2; margin: 0 0 10px; }
+      .stage:not(:last-child)::after { content: "↓"; top: auto; right: 50%; bottom: -28px; transform: translateX(50%); font-size: 25px; }
+      .lower { grid-template-columns: 1fr; }
+    }
+    @media(max-width: 700px) {
+      .wrap { width: calc(100% - 30px); }
+      .site-header { padding: 19px 0; }
+      .header-right .meta { display:none; }
+      .hero { grid-template-columns: 1fr; gap: 20px; padding: 39px 0 24px; }
+      .author { text-align: left; }
+      .stats { grid-template-columns: repeat(2,minmax(0,1fr)); padding-bottom: 24px; }
+      .stat { padding: 13px; gap: 8px; }
+      .stat b { font-size: 14px; }
+      .architecture { padding: 17px; border-radius: 20px; }
+      .section-head { margin-bottom: 19px; }
+      .orchestrator { flex-wrap: wrap; gap: 7px; justify-content: center; font-size: 11px; text-align: center; margin-bottom: 27px; }
+      .stage { grid-template-columns: 53px minmax(0,1fr); gap: 0 9px; padding: 16px; }
+      .stage-icon { width: 45px; height: 45px; border-radius: 12px; }
+      .stage-icon .icon { width: 23px; height: 23px; }
+      .outputs { grid-template-columns:1fr; gap: 10px; }
+      .stack { grid-template-columns: repeat(2,minmax(0,1fr)); }
+      .panel { padding: 18px; }
+      footer { flex-direction: column; align-items: start; }
+    }
+    @media(prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    @media print {
+      :root { color-scheme: light; }
+      body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+      .wrap { width: 100%; }
+      .architecture { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Simple SVG icon library; no external assets or icon CDN required. -->
+  <svg width="0" height="0" aria-hidden="true" style="position:absolute;overflow:hidden">
+    <symbol id="i-quest" viewBox="0 0 24 24"><path d="M13 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5"/><path d="M8 8h8M8 12h4"/><circle cx="16" cy="16" r="4"/><path d="m19 19 3 3"/></symbol>
+    <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 21c0-4.4 3-7 7.5-7s7.5 2.6 7.5 7"/></symbol>
+    <symbol id="i-window" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="M2.5 9h19"/><path d="M7 6.5h.01M10 6.5h.01"/><path d="m7 16 3-3 3 2 3-4"/></symbol>
+    <symbol id="i-robot" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="13" rx="3"/><path d="M12 7V3m-2 0h4M1.5 12v4M22.5 12v4"/><circle cx="9" cy="13" r="1"/><circle cx="15" cy="13" r="1"/><path d="M9.5 17h5"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="7"/><path d="m16 16 5.5 5.5"/><path d="M7.5 10.5h6"/></symbol>
+    <symbol id="i-write" viewBox="0 0 24 24"><path d="M6 3.5h9l4 4V15"/><path d="M15 3.5v4h4"/><path d="M6 3.5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h6"/><path d="M8 11h7M8 14h4"/><path d="m14 20 6-6 2 2-6 6-3 .5z"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="m9.5 9-3 3 3 3m5-6 3 3-3 3M13 8l-2 8"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-4 4-4 14 0 18m0-18c4 4 4 14 0 18"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM15 3v5h4M8 13h8M8 17h6"/></symbol>
+    <symbol id="i-mail" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3.5 7 8.5 6 8.5-6"/></symbol>
+    <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 3 9 5-9 5-9-5 9-5zm-9 9 9 5 9-5M3 16l9 5 9-5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-route" viewBox="0 0 24 24"><circle cx="5" cy="5" r="2"/><circle cx="19" cy="19" r="2"/><path d="M5 7v6a3 3 0 0 0 3 3h8M19 17v-4a3 3 0 0 0-3-3h-5"/><path d="m13 7-3 3 3 3"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 2 1.8 7.2L21 11l-7.2 1.8L12 20l-1.8-7.2L3 11l7.2-1.8L12 2z"/><path d="m20 18 .5 1.5L22 20l-1.5.5L20 22l-.5-1.5L18 20l1.5-.5L20 18z"/></symbol>
+  </svg>
+
+  <div class="wrap">
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="QueryQuest overview">
+        <span class="brand-mark"><svg class="icon"><use href="#i-quest"/></svg></span>
+        <span class="brand-name">QueryQuest<span style="color:var(--coral)">.</span></span>
+      </a>
+      <div class="header-right">
+        <span class="meta">System design / Architecture</span>
+        <span class="header-chip"><span class="live-dot"></span> LOCAL MVP</span>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="title">
+        <div>
+          <div class="eyebrow">Multi-agent research application</div>
+          <h1 id="title">From question to <span>cited research.</span></h1>
+          <p>A clear, three-agent workflow that plans research, searches live sources, writes a structured article, and delivers a polished HTML report.</p>
+        </div>
+        <div class="author"><small>Created by</small><strong>Dhaval Mistry <span>| Mahantai</span></strong></div>
+      </section>
+
+      <section class="stats" aria-label="Architecture at a glance">
+        <div class="stat"><svg class="icon"><use href="#i-robot"/></svg><div><b>3 agents</b><small>Planner · Search · Writer</small></div></div>
+        <div class="stat"><svg class="icon"><use href="#i-file"/></svg><div><b>3 schemas</b><small>Pydantic structured output</small></div></div>
+        <div class="stat"><svg class="icon"><use href="#i-route"/></svg><div><b>1 workflow</b><small>Explicit Python orchestration</small></div></div>
+        <div class="stat"><svg class="icon"><use href="#i-globe"/></svg><div><b>Live web</b><small>OpenAI WebSearchTool</small></div></div>
+      </section>
+
+      <section class="architecture" aria-labelledby="workflow-heading">
+        <div class="section-head">
+          <h2 id="workflow-heading">Research and delivery flow</h2>
+          <span class="section-kicker">Read from left to right <span aria-hidden="true">→</span></span>
+        </div>
+
+        <div class="orchestrator">
+          <svg class="icon sm"><use href="#i-route"/></svg>
+          <b>Python orchestrator</b>
+          <code>queryquest_workflow.py</code>
+          <small>runs agents sequentially</small>
+        </div>
+
+        <div class="flow">
+          <article class="stage">
+            <div class="stage-num">01 · INPUT</div>
+            <span class="stage-icon"><svg class="icon"><use href="#i-window"/></svg></span>
+            <h3>Gradio UI</h3>
+            <p>The user enters a research question and starts the workflow.</p>
+            <div class="stage-bottom"><div class="stage-label">Interface</div><div class="stage-details"><code>app.py</code> + <code>style.py</code></div></div>
+          </article>
+          <article class="stage">
+            <div class="stage-num">02 · PLAN</div>
+            <span class="stage-icon"><svg class="icon"><use href="#i-robot"/></svg></span>
+            <h3>Planner Agent</h3>
+            <p>Generates focused queries and reasons for each search.</p>
+            <div class="stage-bottom"><div class="stage-label">Pydantic output</div><div class="stage-details">WebSearchPlan</div></div>
+          </article>
+          <article class="stage stage-search">
+            <div class="stage-num">03 · RESEARCH</div>
+            <span class="stage-icon"><svg class="icon"><use href="#i-search"/></svg></span>
+            <h3>Search Agent</h3>
+            <p>Collects useful findings and original source URLs.</p>
+            <div class="tool-call"><svg class="icon"><use href="#i-globe"/></svg><div><strong>OpenAI WebSearchTool</strong><small>Live web retrieval</small></div></div>
+            <div class="stage-bottom"><div class="stage-label">Pydantic output</div><div class="stage-details">SearchResult</div></div>
+          </article>
+          <article class="stage">
+            <div class="stage-num">04 · WRITE</div>
+            <span class="stage-icon"><svg class="icon"><use href="#i-write"/></svg></span>
+            <h3>Writer Agent</h3>
+            <p>Turns numbered evidence into an article with citations.</p>
+            <div class="stage-bottom"><div class="stage-label">Pydantic output</div><div class="stage-details">ResearchArticle</div></div>
+          </article>
+          <article class="stage">
+            <div class="stage-num">05 · FORMAT</div>
+            <span class="stage-icon"><svg class="icon"><use href="#i-code"/></svg></span>
+            <h3>HTML Renderer</h3>
+            <p>Formats the structured article into a readable report. No extra LLM call.</p>
+            <div class="stage-bottom"><div class="stage-label">Python service</div><div class="stage-details"><code>services/article_renderer.py</code></div></div>
+          </article>
+        </div>
+
+        <div class="process">OpenAI Agents SDK runs the three agents · Pydantic validates each structured result</div>
+        <div class="output-head"><span class="line"></span><strong>Two presentation channels</strong><span class="line"></span></div>
+        <div class="outputs">
+          <article class="output-card"><div class="output-ico"><svg class="icon"><use href="#i-window"/></svg></div><div><h3>Browser report</h3><p>Responsive HTML article with sections and clickable citations, displayed in Gradio.</p></div></article>
+          <article class="output-card"><div class="output-ico email"><svg class="icon"><use href="#i-mail"/></svg></div><div><h3>Email delivery (optional)</h3><p>User supplies an address. Gmail SMTP sends HTML with a plain-text fallback.</p></div></article>
+        </div>
+      </section>
+
+      <section class="lower" aria-label="Technology and design choices">
+        <div class="panel"><h2><svg class="icon"><use href="#i-layers"/></svg> Core technology</h2>
+          <div class="stack">
+            <div class="stack-item"><strong>OpenAI Agents SDK</strong><small>Agent execution, web tool, tracing</small></div>
+            <div class="stack-item"><strong>Pydantic</strong><small>Typed, validated agent outputs</small></div>
+            <div class="stack-item"><strong>Gradio</strong><small>Research interface and report view</small></div>
+            <div class="stack-item"><strong>Python</strong><small>Workflow, HTML and SMTP</small></div>
+          </div>
+        </div>
+        <div class="panel"><h2><svg class="icon"><use href="#i-spark"/></svg> Design choices</h2>
+          <ul class="principles">
+            <li><svg class="icon"><use href="#i-check"/></svg><span>One straightforward, sequential pipeline</span></li>
+            <li><svg class="icon"><use href="#i-check"/></svg><span>No LangChain, LangGraph or database required</span></li>
+            <li><svg class="icon"><use href="#i-check"/></svg><span>Local learning MVP, not a public production service</span></li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer><span>QueryQuest · Architecture overview · OpenAI Agents SDK + Pydantic</span><span>Powered by <strong>Dhaval Mistry | Mahantai</strong></span></footer>
+  </div>
+</body>
+</html>
