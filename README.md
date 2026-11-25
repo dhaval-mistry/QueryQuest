@@ -4,6 +4,8 @@
 
 QueryQuest plans research, collects evidence, and writes a report. The page shows which step is running. You can read the report in your browser and optionally email it.
 
+**[Try the AWS public preview](https://d2rof5vhi9w78g.cloudfront.net)** — Claude with AWS web search. The preview allows 3 research attempts per visitor address each day; email is disabled.
+
 ## How it works
 
 ```mermaid

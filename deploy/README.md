@@ -2,6 +2,18 @@
 
 This deployment uses the AWS project account in Ohio (`us-east-2`). It creates one `t3.small` Linux EC2 server, a 25 GB encrypted disk, a fixed public IPv4 address, a restricted security group, an application role, and a CloudFront HTTPS address.
 
+## Live deployment
+
+- Website: **https://d2rof5vhi9w78g.cloudfront.net**
+- AWS project account: `456823161025`; region: `us-east-2` (Ohio).
+- CloudFormation stack: `queryquest-public`.
+- EC2 server: `i-0b76d447d79ec9479`; CloudFront distribution: `E31JANOIBKS01F`.
+- Application revision: `d663765895cae590c7568f5bb4afb319f1eee78b`.
+
+In the AWS console, select the project account and Ohio region, then open **CloudFormation → queryquest-public** to find the resources. For a server terminal, use **Systems Manager → Session Manager → Start session**, then select the EC2 server above. The website stays running when there are no visitors; it does not sleep automatically.
+
+Verified on November 25, 2026 (UTC): public HTTPS returned 200, HTTP redirected to HTTPS, and a live research request completed planning, two AWS searches, and Claude article generation with source links. After deliberately stopping the app container, systemd restarted it, the public page recovered, and SQLite usage counters remained intact. Both services are enabled at boot; the application obtained AWS credentials from its server role.
+
 Expected hosting baseline is about **$21/month**, before credits, model calls, search overages, data transfer, and logs. No load balancer, NAT gateway, domain purchase, or SSH key is required. CPU credits are in standard mode to avoid surplus-credit charges.
 
 ## Access and operation
