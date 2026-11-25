@@ -1,29 +1,27 @@
 # LinkedIn post
 
-Attach `assets/queryquest-architecture.png` as the image, then paste the text below.
+Attach `assets/queryquest-aws-architecture.png` as the image, then paste the text below.
 
 ---
 
-I built QueryQuest to turn a question into a research report with clickable sources.
+From a question to a research report?with sources you can actually open. ??
 
-Then I built it two ways:
+I built QueryQuest, an AI research assistant powered by Claude on Amazon Bedrock and AWS AgentCore Web Search.
 
-🟢 GPT + OpenAI web search, using the OpenAI Agents SDK.
-🟠 Claude on Amazon Bedrock + AWS AgentCore Web Search, using Boto3.
+The workflow is straightforward:
+Plan the research ? Collect web evidence ? Write the article ? Check structure and source references.
 
-Both follow the same flow: plan → search → write → validate citations.
+Behind the interface: Python, Gradio, Boto3, Docker, EC2, and CloudFront, with IAM permissions and persistent usage limits.
 
-The AWS version is now live with Docker, EC2, CloudFront HTTPS, IAM roles, and persistent usage limits.
+My biggest lesson: building an AI application means connecting the model, evidence, validation, and deployment into one reliable workflow.
 
-My biggest lesson: changing the model is only part of the work. Authentication, structured outputs, and deployment deserve just as much attention.
+Architecture and code: https://github.com/dhaval-mistry/QueryQuest
+Try it: https://d2rof5vhi9w78g.cloudfront.net
 
-Explore the architecture: https://dhaval-mistry.github.io/QueryQuest/
-Code: https://github.com/dhaval-mistry/QueryQuest
+What would you add next to a research assistant like this?
 
-Which approach would you choose for your next AI application—and why?
-
-#GenerativeAI #AWS #AmazonBedrock #OpenAI #Python
+#GenerativeAI #AWS #AmazonBedrock #AIEngineering #Python
 
 ---
 
-Suggested image alt text: QueryQuest architecture comparing two research workflows. The GPT route uses the OpenAI Agents SDK, GPT, and OpenAI WebSearchTool. The AWS route uses Boto3, Claude on Amazon Bedrock, and direct AgentCore Web Search calls. Both plan research, search, write, and validate reports with source links. The AWS app is hosted through CloudFront, Nginx, Docker, and EC2.
+Suggested image alt text: Illustrated QueryQuest architecture. A user accesses CloudFront and a Gradio app running behind Nginx in Docker on EC2. The Planner and Writer call Claude on Amazon Bedrock; Search calls AgentCore Web Search for evidence from public web sources. The app validates article structure and source IDs, then returns a report with source links. An IAM role grants permissions, SQLite tracks usage counters, and GitHub supplies deployment source code.

@@ -8,10 +8,10 @@
 <meta property="og:title" content="QueryQuest — Under the hood">
 <meta property="og:description" content="One question. Three research stages. Two independent AI architectures.">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://dhaval-mistry.github.io/QueryQuest/assets/queryquest-architecture.png">
-<meta property="og:image:width" content="1600">
-<meta property="og:image:height" content="1600">
-<meta property="og:image:alt" content="QueryQuest architecture comparing GPT with OpenAI web search and Claude on AWS Bedrock with AgentCore Web Search.">
+<meta property="og:image" content="https://dhaval-mistry.github.io/QueryQuest/assets/queryquest-aws-architecture.png">
+<meta property="og:image:width" content="1584">
+<meta property="og:image:height" content="993">
+<meta property="og:image:alt" content="QueryQuest AWS application architecture with illustrated service icons, research workflow, web sources, and deployment.">
 <meta name="twitter:card" content="summary_large_image">
 <title>QueryQuest · Architecture Atlas</title>
 <style>
@@ -56,7 +56,7 @@
 <p class="hosting-note"><b>* Origin connection:</b> browser traffic uses HTTPS to CloudFront. CloudFront connects to Nginx over HTTP, restricted by a CloudFront-only security group and a secret origin header. This deployment does not use end-to-end TLS to EC2.</p></div>
 </section>
 <div class="facts"><article class="fact"><h3>Progress follows the work.</h3><p>The app streams actual planner, search, and writer updates. This architecture page is an interactive explanation; selecting cards does not run research or call paid APIs.</p></article><article class="fact"><h3>Keep the providers independent.</h3><p>Separate folders, dependencies, and environment settings preserve the GPT implementation alongside AWS. Both can be packaged with the root Dockerfile.</p></article><article class="fact"><h3>Public preview has limits.</h3><p>The AWS deployment allows 3 attempts per visitor address daily, 50 globally daily, and 1,000 monthly. Failed attempts count. Public email delivery is disabled.</p></article></div>
-<section class="share" aria-label="Share and explore"><div><h2>Built to explore. Easy to share.</h2><p>Browse the source, try the AWS app, or save this architecture as a PDF.</p><span id="copy-status" role="status"></span></div><div class="actions"><a class="button primary" href="https://d2rof5vhi9w78g.cloudfront.net">Try QueryQuest ↗</a><button class="button" id="copy-link" type="button">Copy page link</button><a class="button" href="assets/queryquest-architecture.png" download="queryquest-architecture.png">Download diagram</a><button class="button" id="print" type="button">Print / PDF</button></div></section>
+<section class="share" aria-label="Share and explore"><div><h2>Built to explore. Easy to share.</h2><p>Browse the source, try the AWS app, or save this architecture as a PDF.</p><span id="copy-status" role="status"></span></div><div class="actions"><a class="button primary" href="https://d2rof5vhi9w78g.cloudfront.net">Try QueryQuest ↗</a><button class="button" id="copy-link" type="button">Copy page link</button><a class="button" href="assets/queryquest-aws-architecture.png" download="queryquest-architecture.png">Download diagram</a><button class="button" id="print" type="button">Print / PDF</button></div></section>
 </main><footer><span>QUERYQUEST · ARCHITECTURE ATLAS</span><span><a href="https://github.com/dhaval-mistry/QueryQuest">Source on GitHub ↗</a> · Dhaval Mistry / Mahantai</span></footer>
 </div>
 <script>

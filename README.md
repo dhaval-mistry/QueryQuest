@@ -10,7 +10,7 @@ QueryQuest plans research, collects evidence, and writes a report. The page show
 
 **[Explore the interactive architecture diagrams](https://dhaval-mistry.github.io/QueryQuest/)** — GPT, AWS, and the live hosting setup. You can also open [docs/index.html](docs/index.html) locally and use **Print / PDF** to share a copy.
 
-For presentations and social posts: [download the architecture image](docs/assets/queryquest-architecture.png), use the [editable SVG](docs/assets/queryquest-architecture.svg), or copy the [LinkedIn post](docs/linkedin-post.md).
+For presentations and social posts: [download the illustrated AWS architecture](docs/assets/queryquest-aws-architecture.png) or copy the [LinkedIn post](docs/linkedin-post.md).
 
 ```mermaid
 flowchart LR
