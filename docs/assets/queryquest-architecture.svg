@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1600" viewBox="0 0 1600 1600" role="img" aria-labelledby="title desc">
+<title id="title">QueryQuest: GPT and AWS research architectures</title>
+<desc id="desc">A question flows through planning, search, and writing to a report with source links. The GPT version uses the OpenAI Agents SDK and WebSearchTool. The AWS version uses Claude on Bedrock and direct AgentCore Web Search calls through Boto3. AWS hosting uses CloudFront, Nginx and Gradio in Docker on EC2, with an IAM role.</desc>
+<defs>
+ <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#101924"/><stop offset="1" stop-color="#171a2a"/></linearGradient>
+ <linearGradient id="gpt" x2="0" y2="1"><stop stop-color="#1a3235"/><stop offset="1" stop-color="#182332"/></linearGradient>
+ <linearGradient id="aws" x2="0" y2="1"><stop stop-color="#352c29"/><stop offset="1" stop-color="#222333"/></linearGradient>
+ <marker id="greenArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 8 5 1 9" fill="none" stroke="#8ae4c2" stroke-width="1.6"/></marker>
+ <marker id="orangeArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 8 5 1 9" fill="none" stroke="#ffbc78" stroke-width="1.6"/></marker>
+ <marker id="blueArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M1 1 8 5 1 9" fill="none" stroke="#a7c4ff" stroke-width="1.6"/></marker>
+ <style>text{font-family:"Segoe UI",Arial,sans-serif;fill:#f2f5fb}.muted{fill:#b7c3d4}.mint{fill:#8ae4c2}.orange{fill:#ffbc78}.coral{fill:#ff827b}.micro{font-size:21px;letter-spacing:3px;font-weight:700}.label{font-size:30px;font-weight:700}.body{font-size:25px}.small{font-size:23px}.node{fill:#1e2b3c;stroke:#48596e;stroke-width:1.5}.wire{fill:none;stroke-width:2.5}</style>
+</defs>
+<rect width="1600" height="1600" fill="url(#bg)"/>
+<circle cx="1460" cy="40" r="280" fill="#ff827b" opacity=".025"/>
+<path d="M80 112H1520" stroke="#3b4659"/>
+<rect x="80" y="50" width="40" height="40" rx="12" fill="#ff827b"/>
+<path d="M90 70h20m-10-10v20" stroke="#151b27" stroke-width="3"/>
+<text x="137" y="82" font-size="32" font-weight="800">Query<tspan class="coral">Quest</tspan></text>
+<text x="1520" y="78" text-anchor="end" class="micro muted">ARCHITECTURE / 01</text>
+<text x="80" y="207" font-size="76" font-weight="750" letter-spacing="-3">One question. <tspan class="coral">Two AI engines.</tspan></text>
+<text x="80" y="263" font-size="30" class="muted">Plan the research. Search for evidence. Write a report with sources.</text>
+
+<!-- OpenAI: three model-backed agents coordinated by Python. -->
+<rect x="80" y="315" width="704" height="898" rx="28" fill="url(#gpt)" stroke="#486264"/>
+<text x="116" y="366" class="micro mint">OPENAI / DIRECT API</text>
+<text x="116" y="421" font-size="44" font-weight="750">GPT + OpenAI web search</text>
+<text x="116" y="464" class="body muted">Gradio interface · OpenAI Agents SDK</text>
+<path d="M116 490H748" stroke="#476164"/>
+<rect x="116" y="514" width="632" height="57" rx="12" fill="#111e2a" stroke="#526c74" stroke-dasharray="6 5"/>
+<text x="432" y="552" text-anchor="middle" class="body">Your research question</text>
+<path d="M432 572V604" class="wire" stroke="#8ae4c2" marker-end="url(#greenArrow)"/>
+<rect x="116" y="617" width="632" height="124" rx="17" class="node"/>
+<rect x="137" y="642" width="48" height="48" rx="12" fill="#284541"/>
+<text x="161" y="675" text-anchor="middle" class="body mint">01</text>
+<text x="206" y="661" class="label">Planner agent</text>
+<text x="206" y="705" class="body muted">GPT creates the search queries</text>
+<path d="M432 742V774" class="wire" stroke="#8ae4c2" marker-end="url(#greenArrow)"/>
+<rect x="116" y="787" width="632" height="124" rx="17" class="node"/>
+<rect x="137" y="812" width="48" height="48" rx="12" fill="#284541"/>
+<text x="161" y="845" text-anchor="middle" class="body mint">02</text>
+<text x="206" y="831" class="label">Search agent</text>
+<text x="206" y="875" class="body muted">GPT + OpenAI WebSearchTool</text>
+<path d="M432 912V944" class="wire" stroke="#8ae4c2" marker-end="url(#greenArrow)"/>
+<rect x="116" y="957" width="632" height="124" rx="17" class="node"/>
+<rect x="137" y="982" width="48" height="48" rx="12" fill="#284541"/>
+<text x="161" y="1015" text-anchor="middle" class="body mint">03</text>
+<text x="206" y="1001" class="label">Writer agent</text>
+<text x="206" y="1045" class="body muted">GPT writes from the collected evidence</text>
+<path d="M432 1082V1114" class="wire" stroke="#8ae4c2" marker-end="url(#greenArrow)"/>
+<rect x="116" y="1127" width="632" height="56" rx="12" fill="#142b2a" stroke="#638e80"/>
+<text x="432" y="1164" text-anchor="middle" class="body mint">Validated report + source links</text>
+
+<!-- AWS: model calls for planning/writing, direct service calls for search. -->
+<rect x="816" y="315" width="704" height="898" rx="28" fill="url(#aws)" stroke="#74604d"/>
+<text x="852" y="366" class="micro orange">AWS / BEDROCK + AGENTCORE</text>
+<text x="852" y="421" font-size="44" font-weight="750">Claude + AWS web search</text>
+<text x="852" y="464" class="body muted">Gradio interface · Boto3</text>
+<path d="M852 490H1484" stroke="#74604d"/>
+<rect x="852" y="514" width="632" height="57" rx="12" fill="#201d25" stroke="#806f66" stroke-dasharray="6 5"/>
+<text x="1168" y="552" text-anchor="middle" class="body">Your research question</text>
+<path d="M1168 572V604" class="wire" stroke="#ffbc78" marker-end="url(#orangeArrow)"/>
+<rect x="852" y="617" width="632" height="124" rx="17" class="node"/>
+<rect x="873" y="642" width="48" height="48" rx="12" fill="#4c3c2e"/>
+<text x="897" y="675" text-anchor="middle" class="body orange">01</text>
+<text x="942" y="661" class="label">Planner agent</text>
+<text x="942" y="705" class="body muted">Claude on Amazon Bedrock</text>
+<path d="M1168 742V774" class="wire" stroke="#ffbc78" marker-end="url(#orangeArrow)"/>
+<rect x="852" y="787" width="632" height="124" rx="17" class="node"/>
+<rect x="873" y="812" width="48" height="48" rx="12" fill="#4c3c2e"/>
+<text x="897" y="845" text-anchor="middle" class="body orange">02</text>
+<text x="942" y="831" class="label">Search service</text>
+<text x="942" y="875" class="body muted">AgentCore Web Search · direct API call</text>
+<path d="M1168 912V944" class="wire" stroke="#ffbc78" marker-end="url(#orangeArrow)"/>
+<rect x="852" y="957" width="632" height="124" rx="17" class="node"/>
+<rect x="873" y="982" width="48" height="48" rx="12" fill="#4c3c2e"/>
+<text x="897" y="1015" text-anchor="middle" class="body orange">03</text>
+<text x="942" y="1001" class="label">Writer agent</text>
+<text x="942" y="1045" class="body muted">Claude on Amazon Bedrock</text>
+<path d="M1168 1082V1114" class="wire" stroke="#ffbc78" marker-end="url(#orangeArrow)"/>
+<rect x="852" y="1127" width="632" height="56" rx="12" fill="#302820" stroke="#9a7956"/>
+<text x="1168" y="1164" text-anchor="middle" class="body orange">Validated report + source links</text>
+
+<!-- Current deployment, deliberately separate from the two AI workflows. -->
+<text x="80" y="1272" class="micro" fill="#a7c4ff">LIVE AWS HOSTING</text>
+<rect x="80" y="1300" width="1440" height="167" rx="22" fill="#1a2332" stroke="#465774"/>
+<text x="118" y="1359" class="label">Browser</text>
+<path d="M274 1349H343" class="wire" stroke="#a7c4ff" marker-end="url(#blueArrow)"/>
+<text x="370" y="1359" class="label">CloudFront</text>
+<path d="M575 1349H644" class="wire" stroke="#a7c4ff" marker-end="url(#blueArrow)"/>
+<text x="673" y="1359" class="label">Nginx</text>
+<path d="M795 1349H864" class="wire" stroke="#a7c4ff" marker-end="url(#blueArrow)"/>
+<text x="894" y="1359" class="label">Gradio in Docker on EC2</text>
+<text x="118" y="1421" class="small muted">Browser HTTPS · restricted HTTP origin · IAM role · persistent usage limits · automatic restart</text>
+<path d="M80 1510H1520" stroke="#3b4659"/>
+<text x="80" y="1561" class="small muted">Built by Dhaval Mistry / Mahantai</text>
+<text x="1520" y="1561" text-anchor="end" class="small">github.com/dhaval-mistry/QueryQuest</text>
+</svg>
