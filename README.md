@@ -8,6 +8,8 @@ QueryQuest plans research, collects evidence, and writes a report. The page show
 
 ## How it works
 
+**[Explore the interactive architecture diagrams](https://dhaval-mistry.github.io/QueryQuest/)** — GPT, AWS, and the live hosting setup. You can also open [docs/index.html](docs/index.html) locally and use **Print / PDF** to share a copy.
+
 ```mermaid
 flowchart LR
     Q[Your question] --> P[Planner creates search queries]
