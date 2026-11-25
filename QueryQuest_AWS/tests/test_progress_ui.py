@@ -59,6 +59,23 @@ class ProgressUiTests(unittest.TestCase):
         demo = app.build_app()
         self.assertTrue(any(fn.fn is app.research for fn in demo.fns.values()))
 
+    def test_public_quota_blocks_before_any_model_work(self):
+        from services.usage_limits import UsageLimitError
+        with patch("app.reserve_research", side_effect=UsageLimitError("Daily allowance reached")), \
+                patch("app.research_steps") as steps, self.assertLogs("app", level="WARNING"):
+            outputs = list(app.research("Question"))
+        steps.assert_not_called()
+        self.assertIn("Daily allowance reached", outputs[-1][2])
+        self.assertFalse(outputs[-1][5]["interactive"])
+
+    def test_public_preview_does_not_enable_email_delivery(self):
+        def steps(question):
+            yield ResearchUpdate("complete", "Ready", sample_result())
+        with patch("app.public_mode", return_value=True), patch("app.research_steps", side_effect=steps), patch("app.reserve_research"):
+            outputs = list(app.research("Question"))
+            self.assertIn("not available", app.email_article("visitor@example.com", outputs[-1][1]))
+        self.assertFalse(outputs[-1][5]["interactive"])
+
 
 if __name__ == "__main__":
     unittest.main()

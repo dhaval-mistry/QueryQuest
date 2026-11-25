@@ -18,20 +18,24 @@ from services.email_sender import send_email, normalize_email
 from style import THEME, CUSTOM_CSS
 from services.research_progress import progress_html
 from pydantic import ValidationError
+from services.usage_limits import reserve_research, UsageLimitError, public_mode
 
 load_dotenv(Path(__file__).resolve().parent / ".env")
 logger = logging.getLogger(__name__)
 
 
-def research(question):
+def research(question, request: gr.Request = None):
     """Stream actual agent stages; expose only validated reports for email."""
     question = (question or "").strip()
     if not question:
         raise gr.Error("Enter a research question first.")
+    if len(question) > 2000:
+        raise gr.Error("Please keep your research question under 2,000 characters.")
     stage = "checking"
-    yield (empty_article_html(), {}, progress_html(stage, "Checking your research setup?"),
+    yield (empty_article_html(), {}, progress_html(stage, "Checking your research setup..."),
            gr.update(interactive=False), gr.update(interactive=False), gr.update(interactive=False))
     try:
+        reserve_research(request)
         for update in research_steps(question):
             stage = update.stage
             if update.result is None:
@@ -44,8 +48,8 @@ def research(question):
             email_html = render_article_html(article, sources, completed, planned, for_email=True)
             state = {"title": article.title, "email_body": email_text, "email_html": email_html}
             yield (preview, state, progress_html("complete", update.detail),
-                   gr.update(interactive=True), gr.update(interactive=True), gr.update(interactive=True))
-    except AWSConfigurationError as error:
+                   gr.update(interactive=True), gr.update(interactive=True), gr.update(interactive=not public_mode()))
+    except (AWSConfigurationError, UsageLimitError) as error:
         logger.warning("AWS configuration incomplete: %s", error)
         yield (gr.skip(), {}, progress_html(stage, str(error), failed=True),
                gr.update(interactive=True), gr.update(interactive=True), gr.update(interactive=False))
@@ -62,6 +66,8 @@ def research(question):
 
 def email_article(address, article_state):
     """Email the existing article only after the user clicks Send."""
+    if public_mode():
+        return "Email delivery is not available in this public preview."
     if not article_state or not article_state.get("email_body"):
         return "Generate your research report first."
 
@@ -124,7 +130,7 @@ def build_app():
         )
         article_state = gr.State({})
 
-        with gr.Accordion("Email this report (optional)", open=False):
+        with gr.Accordion("Email this report (optional)", open=False, visible=not public_mode()):
             email = gr.Textbox(
                 label="Recipient email address",
                 placeholder="you@example.com",

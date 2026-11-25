@@ -74,6 +74,6 @@ These tests do not call model/search services or send emails. The manual model, 
 
 ## Costs and hosting
 
-Model calls and web searches can incur usage charges. Hosting is a separate cost. [Docker instructions](DOCKER.md) explain how to package either version for AWS or Render. Publishing requires a hosting configuration, unattended credentials, and public usage limits. Your local AWS browser-login session is for development.
+Model calls and web searches can incur usage charges. Hosting is a separate cost. [Docker instructions](DOCKER.md) explain how to package either version for AWS or Render. Publishing requires a hosting configuration, unattended credentials, and public usage limits. Your local AWS browser-login session is for development. The [AWS deployment guide](deploy/README.md) describes the server, HTTPS, and public usage limits.
 
 **Powered by Dhaval Mistry | Mahantai**
