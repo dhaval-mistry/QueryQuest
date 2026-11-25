@@ -1,0 +1,17 @@
+.git
+.github
+.vscode
+.tmp
+.docker-local
+**/.venv
+**/.uv-cache
+**/__pycache__
+**/*.pyc
+**/.env
+**/.env.*
+!**/.env.example
+**/.aws
+**/.codex
+**/*.pem
+**/*.key
+**/*credentials*.csv

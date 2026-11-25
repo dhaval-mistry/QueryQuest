@@ -1,29 +1,49 @@
-
 {
   "version": "0.2.0",
   "configurations": [
     {
-      // Debug whichever Python file is currently open.
-      "name": "Python: Current File",
+      "name": "QueryQuest GPT: App",
       "type": "debugpy",
       "request": "launch",
-      "program": "${file}",
       "console": "integratedTerminal",
-      "cwd": "${workspaceFolder}",
-      "envFile": "${workspaceFolder}/.env",
-      "justMyCode": true
+      "cwd": "${workspaceFolder}/QueryQuest_GPT",
+      "envFile": "${workspaceFolder}/QueryQuest_GPT/.env",
+      "python": "${workspaceFolder}/QueryQuest_GPT/.venv/Scripts/python.exe",
+      "justMyCode": true,
+      "program": "${workspaceFolder}/QueryQuest_GPT/app.py"
     },
     {
-      // Debug our Planner using the same module
-      // command as: uv run python -m tests.test_planner
-      "name": "QueryQuest: Planner Agent",
+      "name": "QueryQuest GPT: Model access",
       "type": "debugpy",
       "request": "launch",
-      "module": "tests.check_model_access",
       "console": "integratedTerminal",
-      "cwd": "${workspaceFolder}",
-      "envFile": "${workspaceFolder}/.env",
-      "justMyCode": true
+      "cwd": "${workspaceFolder}/QueryQuest_GPT",
+      "envFile": "${workspaceFolder}/QueryQuest_GPT/.env",
+      "python": "${workspaceFolder}/QueryQuest_GPT/.venv/Scripts/python.exe",
+      "justMyCode": true,
+      "module": "tests.check_model_access"
+    },
+    {
+      "name": "QueryQuest AWS: App",
+      "type": "debugpy",
+      "request": "launch",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/QueryQuest_AWS",
+      "envFile": "${workspaceFolder}/QueryQuest_AWS/.env",
+      "python": "${workspaceFolder}/QueryQuest_AWS/.venv/Scripts/python.exe",
+      "justMyCode": true,
+      "program": "${workspaceFolder}/QueryQuest_AWS/app.py"
+    },
+    {
+      "name": "QueryQuest AWS: Model access",
+      "type": "debugpy",
+      "request": "launch",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}/QueryQuest_AWS",
+      "envFile": "${workspaceFolder}/QueryQuest_AWS/.env",
+      "python": "${workspaceFolder}/QueryQuest_AWS/.venv/Scripts/python.exe",
+      "justMyCode": true,
+      "module": "tests.check_model_access"
     }
   ]
 }

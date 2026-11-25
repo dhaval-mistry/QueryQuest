@@ -1,0 +1,60 @@
+name: Verify projects and Docker packages
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: QueryQuest_AWS
+            variant: aws
+          - project: QueryQuest_GPT
+            variant: gpt
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.13.7"
+          python-version: "3.12"
+      - name: Run offline tests
+        working-directory: ${{ matrix.project }}
+        env:
+          GRADIO_ANALYTICS_ENABLED: "False"
+        run: |
+          uv sync --locked
+          uv run --no-sync python -m unittest discover -s tests -v
+      - uses: docker/setup-buildx-action@v3
+      - name: Build Docker package
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          build-args: APP_VARIANT=${{ matrix.project }}
+          load: true
+          tags: queryquest:ci-${{ matrix.variant }}
+          cache-from: type=gha,scope=${{ matrix.variant }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.variant }}
+      - name: Test the packaged application
+        run: |
+          docker run --rm --entrypoint python queryquest:ci-${{ matrix.variant }} -m unittest discover -s tests -v
+          docker run -d --name queryquest-smoke -p 127.0.0.1:7860:7860 queryquest:ci-${{ matrix.variant }}
+          for attempt in $(seq 1 45); do
+            if curl --fail --silent http://127.0.0.1:7860/ > /dev/null; then
+              docker exec queryquest-smoke python -c "import os,pathlib; assert os.getuid()!=0; assert not pathlib.Path('/app/.env').exists()"
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs queryquest-smoke
+          exit 1
+      - name: Clean up smoke test
+        if: always()
+        run: docker rm -f queryquest-smoke || true

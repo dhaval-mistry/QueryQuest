@@ -1,4 +1,12 @@
 .env
 .venv/
 __pycache__/
-ignore 
+ignore
+.uv-cache/
+
+.env.*
+!.env.example
+
+.docker-local/
+.tmp/
+*.tar
